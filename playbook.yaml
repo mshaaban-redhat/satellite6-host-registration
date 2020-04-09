@@ -1,0 +1,4 @@
+- name: Register a new host to Satellite 6
+  hosts: all
+  roles:
+    - host-registration

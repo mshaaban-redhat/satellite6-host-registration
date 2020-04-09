@@ -1,0 +1,24 @@
+---
+# tasks file for host-registration
+# check the os distribution family and version
+- name: gather os distribution
+  debug: msg="{{ item }}"
+  with_items: 
+  - "{{ ansible_distribution }}"
+  - "{{ ansible_distribution_version }}"
+  - "{{ ansible_distribution_major_version }}"
+
+# Download the bootstrap script from Satellite server and regidter rhel host
+- name: Register to Satellite
+  block:
+    - name: Download bootstrap script
+      get_url: 
+        url: "{{ bootstrap_url }}"
+        dest: /root/bootstrap.py
+        mode: "0755"
+        validate_certs: no
+
+    - name: Run bootstrap script
+      shell: /root/bootstrap.py -l admin -p {{ Password }} -s {{ Satellite_Server }} -o {{ Satellite_Organization }} -a "RHEL{{ ansible_distribution_major_version }}_AK" -L Default --skip-foreman --force --install-katello-agent --fqdn=$(hostname)
+
+  when: ansible_distribution == "RedHat"

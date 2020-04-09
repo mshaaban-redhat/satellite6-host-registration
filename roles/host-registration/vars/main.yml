@@ -1,0 +1,6 @@
+---
+# vars file for host-registration
+Satellite_Server: 
+bootstrap_url: "https://{{ Satellite_Server }}/pub/bootstrap.py"
+Satellite_Organization: 
+Password: 
