@@ -14,6 +14,7 @@
   register: is_python_installed
   changed_when: false
   ignore_errors: true
+  when: ansible_distribution_major_version == "8"
 
 - name: install python3 on rhel 8 systems 
   block:
@@ -41,8 +42,11 @@
 
     - name: Run bootstrap script
       shell: /root/bootstrap.py -l admin -p {{ Password }} -s {{ Satellite_Server }} -o {{ Satellite_Organization }} -a "RHEL{{ ansible_distribution_major_version }}_AK" -L Default --skip-foreman --force --install-katello-agent --fqdn=$(hostname)
-    #   register: bootstrap_log
+       register: bootstrap_log
 
+    # - name: remove rhn subscription from rhel 7
+    #   shell: mv /etc/sysconfig/rhn/systemid /root/systemid-bakup
+    #   when: 
     # - debug:
     #   msg: "{{ bootstrap_log.stdout }}"
   when: ansible_distribution == "RedHat"
