@@ -24,9 +24,9 @@
 
     - name: add python symbolic link to python2
       alternatives:
-      name: python
-      link: /usr/bin/python
-      path: /usr/bin/python2
+        name: python
+        link: /usr/bin/python
+        path: /usr/bin/python2
   when: ansible_distribution == "RedHat" and ansible_distribution_major_version == 8 and python_installed.rc == 1
 
 # Download the bootstrap script from Satellite server and regidter rhel host
