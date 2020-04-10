@@ -9,14 +9,14 @@
   - "{{ ansible_distribution_major_version }}"
 
 # install python2 if it is not installed
+- name: check if the python is alraady installed
+  shell: which python
+  register: python_installed
+  changed_when: false
+  ignore_errors: true
+
 - name: install python2 and add make it default in rhel 8 systems if not exixts
   block:
-    - name: check if the python is alraady installed
-      shell: which python
-      register: python_installed
-      changed_when: false
-      ignore_errors: true
-
     - name: install python2
       yum:
         name: python2
