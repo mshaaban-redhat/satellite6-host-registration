@@ -8,6 +8,19 @@
   - "{{ ansible_distribution_version }}"
   - "{{ ansible_distribution_major_version }}"
 
+# install python2 if it is not installed
+- name: check if the python is alraady installed
+  shell: which python
+  register: python_installed
+  changed_when: false
+  ignore_errors: true
+
+- name: install python2
+  yum:
+    name: python2
+    state: present
+  when: ansible_distribution == "RedHat" and python_installed.rc == 1
+
 # Download the bootstrap script from Satellite server and regidter rhel host
 - name: Register to Satellite
   block:
@@ -20,5 +33,9 @@
 
     - name: Run bootstrap script
       shell: /root/bootstrap.py -l admin -p {{ Password }} -s {{ Satellite_Server }} -o {{ Satellite_Organization }} -a "RHEL{{ ansible_distribution_major_version }}_AK" -L Default --skip-foreman --force --install-katello-agent --fqdn=$(hostname)
+    #   register: bootstrap_log
+
+    # - debug:
+    #   msg: "{{ bootstrap_log.stdout }}"
 
   when: ansible_distribution == "RedHat"
