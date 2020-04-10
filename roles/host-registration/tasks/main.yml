@@ -11,11 +11,11 @@
 # install python2 if it is not installed
 - name: check if the python is alraady installed
   shell: which python
-  register: python_installed
+  register: is_python_installed
   changed_when: false
   ignore_errors: true
 
-- name: install python2 and add make it default in rhel 8 systems if not exixts
+- name: install python2 on rhel 8 systems 
   block:
     - name: install python2
       yum:
@@ -27,9 +27,9 @@
         name: python
         link: /usr/bin/python
         path: /usr/bin/python2
-  when: python_installed.rc == "1" and ansible_distribution_major_version == "8"
+  when: ansible_distribution_major_version == "8" and is_python_installed.rc == 1 
 
-# Download the bootstrap script from Satellite server and regidter rhel host
+Download the bootstrap script from Satellite server and regidter rhel host
 - name: Register to Satellite
   block:
     - name: Download bootstrap script
