@@ -15,18 +15,18 @@
   changed_when: false
   ignore_errors: true
 
-- name: install python2 on rhel 8 systems 
+- name: install python3 on rhel 8 systems 
   block:
-    - name: install python2
+    - name: install python3
       yum:
-        name: python2
+        name: python36
         state: present
 
-    - name: add python symbolic link to python2
+    - name: add python symbolic link to python3
       alternatives:
         name: python
         link: /usr/bin/python
-        path: /usr/bin/python2
+        path: /usr/bin/python3.6
   when: ansible_distribution_major_version == "8" and is_python_installed.rc == 1 
 
 # Download the bootstrap script from Satellite server and regidter rhel host
