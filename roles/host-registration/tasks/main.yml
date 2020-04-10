@@ -27,7 +27,7 @@
         name: python
         link: /usr/bin/python
         path: /usr/bin/python2
-  when: ansible_distribution == "RedHat" and python_installed.rc == 1 and ansible_distribution_major_version == 8
+  when: python_installed.rc == "1" and ansible_distribution_major_version == "8"
 
 # Download the bootstrap script from Satellite server and regidter rhel host
 - name: Register to Satellite
