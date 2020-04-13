@@ -8,29 +8,12 @@
   - "{{ ansible_distribution_version }}"
   - "{{ ansible_distribution_major_version }}"
 
-# install python2 if it is not installed
-- name: check if the python is alraady installed
-  shell: which python
-  register: is_python_installed
-  changed_when: false
+- name: remove rhn subscription from rhel 7 if it exists
+  shell: mv /etc/sysconfig/rhn/systemid /root/systemid-bakup
   ignore_errors: true
-  when: ansible_distribution_major_version == "8"
+  when: ansible_distribution_major_version == "7" and ansible_distribution == 'RedHat'
 
-- name: install python3 on rhel 8 systems 
-  block:
-    - name: install python3
-      yum:
-        name: python36
-        state: present
-
-    - name: add python symbolic link to python3
-      alternatives:
-        name: python
-        link: /usr/bin/python
-        path: /usr/bin/python3.6
-  when: ansible_distribution_major_version == "8" and is_python_installed.rc == 1 
-
-# Download the bootstrap script from Satellite server and regidter rhel host
+# Download the bootstrap script from Satellite server and register a rhel host
 - name: Register to Satellite
   block:
     - name: Download bootstrap script
@@ -41,12 +24,23 @@
         validate_certs: no
 
     - name: Run bootstrap script
-      shell: /root/bootstrap.py -l admin -p {{ Password }} -s {{ Satellite_Server }} -o {{ Satellite_Organization }} -a "RHEL{{ ansible_distribution_major_version }}_AK" -L Default --skip-foreman --force --install-katello-agent --fqdn=$(hostname)
-       register: bootstrap_log
+      command:
+        argv:
+          - "{{ Python }}"
+          - /root/bootstrap.py 
+          - -l admin
+          - -p {{ Satellite6_Password }}
+          - -s{{ Satellite_Server }}
+          - -o{{ Satellite_Organization }}
+          - -aRHEL{{ ansible_distribution_major_version }}_AK
+          - -L Default
+          - --skip=puppet
+          - --skip=foreman
+          - --force
+          - --install-katello-agent
+          - --fqdn=$(hostname)
+          - --legacy-purge
+          - --legacy-login=migration
+          - --legacy-password={{ Satellite5_Password }}
 
-    # - name: remove rhn subscription from rhel 7
-    #   shell: mv /etc/sysconfig/rhn/systemid /root/systemid-bakup
-    #   when: 
-    # - debug:
-    #   msg: "{{ bootstrap_log.stdout }}"
   when: ansible_distribution == "RedHat"

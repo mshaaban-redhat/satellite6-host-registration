@@ -1,6 +1,8 @@
 ---
 # vars file for host-registration
-Satellite_Server: 
+Satellite_Server: ""
 bootstrap_url: "https://{{ Satellite_Server }}/pub/bootstrap.py"
 Satellite_Organization: 
-Password: 
+Satellite6_Password: 
+Python: "{%- if ansible_distribution_major_version == '8' -%} /usr/libexec/platform-python {%- else -%} /usr/bin/python {%- endif -%}"
+Satellite5_Password: 
