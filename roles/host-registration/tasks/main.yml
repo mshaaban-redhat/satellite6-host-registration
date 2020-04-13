@@ -38,7 +38,7 @@
           - --skip=foreman
           - --force
           - --install-katello-agent
-          - --fqdn=$(hostname)
+          - --fqdn={{ dnsname }}
           - --legacy-purge
           - --legacy-login=migration
           - --legacy-password={{ Satellite5_Password }}
